@@ -1,0 +1,26 @@
+zookeeper:
+  image: mesosphere/mesos:0.20.0
+  net: host
+  command: /usr/share/zookeeper/bin/zkServer.sh start-foreground
+master:
+  image: mesosphere/mesos-master:0.20.0
+  net: host
+  environment:
+    MESOS_zk: "zk://localhost:2181/mesos"
+    MESOS_log_dir: "/var/log/mesos"
+slave1:
+  image: mesosphere/mesos-slave:0.20.0
+  net: host
+  environment:
+    MESOS_master: "zk://localhost:2181/mesos"
+    MESOS_port: 5051
+slave2:
+  image: mesosphere/mesos-slave:0.20.0
+  net: host
+  environment:
+    MESOS_master: "zk://localhost:2181/mesos"
+    MESOS_port: 5151
+marathon:
+  image: everpeace/marathon:0.6.1
+  net: host
+  command: /marathon-0.6.1/bin/start --master zk://localhost:2181/mesos --zk zk://localhost:2181/marathon --event_subscriber http_callback
